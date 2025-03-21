@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Phone, 
@@ -11,6 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import WhatsAppDialog from './WhatsAppDialog';
 
 const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +21,7 @@ const ContactSection: React.FC = () => {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [whatsAppDialogOpen, setWhatsAppDialogOpen] = useState(false);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -47,10 +48,6 @@ const ContactSection: React.FC = () => {
       
       setIsSubmitting(false);
     }, 1500);
-  };
-  
-  const openWhatsApp = () => {
-    window.open(`https://wa.me/8801640063079`, '_blank');
   };
   
   const contactInfo = [
@@ -202,14 +199,20 @@ const ContactSection: React.FC = () => {
                 ))}
               </div>
               
-              {/* WhatsApp Button */}
+              {/* WhatsApp Button - Updated to open dialog */}
               <button
-                onClick={openWhatsApp}
+                onClick={() => setWhatsAppDialogOpen(true)}
                 className="mt-6 w-full bg-[#25D366] text-white px-6 py-3 rounded-md hover:bg-[#20BF5B] transition-colors flex items-center justify-center"
               >
                 <MessageCircle size={18} className="mr-2" />
                 <span>Chat on WhatsApp</span>
               </button>
+              
+              {/* WhatsApp Dialog Component */}
+              <WhatsAppDialog 
+                open={whatsAppDialogOpen}
+                onOpenChange={setWhatsAppDialogOpen} 
+              />
             </div>
             
             {/* Google Map */}
