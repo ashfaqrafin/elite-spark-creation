@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Phone, 
@@ -28,26 +29,41 @@ const ContactSection: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success('Message sent successfully! We\'ll get back to you soon.', {
-        description: 'Thank you for contacting Elite Site Creation.',
+    try {
+      // When deployed on Hostinger, this path will point to the PHP mail script
+      const response = await fetch('mail.php', {
+        method: 'POST',
+        body: new FormData(e.target as HTMLFormElement),
+      });
+      
+      if (response.ok) {
+        toast.success('Message sent successfully! We\'ll get back to you soon.', {
+          description: 'Thank you for contacting Elite Site Creation.',
+          duration: 5000,
+        });
+        
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      toast.error('Failed to send message', {
+        description: 'Please try again or contact us directly.',
         duration: 5000,
       });
-      
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
-      
+      console.error('Email send error:', error);
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
   
   const contactInfo = [
