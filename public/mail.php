@@ -24,7 +24,7 @@ try {
     $mail->Host       = 'smtp.hostinger.com';             // Hostinger SMTP server
     $mail->SMTPAuth   = true;                             // Enable SMTP authentication
     $mail->Username   = 'support@elitesitecreation.com';  // SMTP username (your Hostinger email)
-    $mail->Password   = 'Pen&paper_17518';            // SMTP password (replace with actual password)
+    $mail->Password   = '';            // SMTP password (replace with actual password)
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // Enable TLS encryption
     $mail->Port       = 465;                              // TCP port to connect to
 
