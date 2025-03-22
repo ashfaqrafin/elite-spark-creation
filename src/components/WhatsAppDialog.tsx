@@ -11,7 +11,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { toast } from 'sonner';
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface WhatsAppDialogProps {
   open: boolean;
@@ -19,76 +21,92 @@ interface WhatsAppDialogProps {
 }
 
 const WhatsAppDialog: React.FC<WhatsAppDialogProps> = ({ open, onOpenChange }) => {
-  const [message, setMessage] = useState<string>('Hello! I would like to inquire about your services.');
-  const [isSending, setIsSending] = useState<boolean>(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const handleSend = () => {
-    if (!message.trim()) {
-      toast.error('Please enter a message');
-      return;
-    }
-
-    setIsSending(true);
-    
-    // Encode the message for URL
-    const encodedMessage = encodeURIComponent(message);
-    
-    // Open WhatsApp with the pre-filled message
-    window.open(`https://wa.me/8801640063079?text=${encodedMessage}`, '_blank');
-    
-    // Reset and close dialog
-    setTimeout(() => {
-      setIsSending(false);
-      setMessage('Hello! I would like to inquire about your services.');
-      onOpenChange(false);
-      
-      toast.success('WhatsApp opened with your message!');
-    }, 500);
+  const handleIframeLoad = () => {
+    setIframeLoaded(true);
+    setIsLoading(false);
   };
 
+  // Choose between Dialog (desktop) and Drawer (mobile)
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[90vw] md:max-w-[70vw] lg:max-w-[60vw] max-h-[80vh] glass-card border-elite-surface/30">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-[#25D366]" />
+              <span>WhatsApp Web</span>
+            </DialogTitle>
+            <DialogDescription>
+              Chat directly without leaving the website
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="relative mt-2 flex-1 overflow-hidden rounded-md h-[60vh]">
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-elite-bg-dark/80">
+                <div className="loader" style={{ width: '40px', height: '40px' }}></div>
+              </div>
+            )}
+            <iframe 
+              src="https://web.whatsapp.com" 
+              className="w-full h-full border-0"
+              onLoad={handleIframeLoad}
+              title="WhatsApp Web"
+            ></iframe>
+          </div>
+          
+          <DialogFooter className="mt-4">
+            <Button
+              onClick={() => onOpenChange(false)}
+              className="w-full bg-elite-surface hover:bg-elite-surface/80 text-white transition-colors"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md glass-card border-elite-surface/30">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="max-h-[90vh] glass-card border-elite-surface/30">
+        <div className="px-4 py-3 border-b border-elite-surface/30">
+          <div className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-[#25D366]" />
-            <span>WhatsApp Message</span>
-          </DialogTitle>
-          <DialogDescription>
-            Type your message below to send directly to our WhatsApp.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="mt-2">
-          <Textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type your message here..."
-            className="min-h-[120px] bg-elite-bg-darker border border-elite-surface rounded-md px-4 py-3 focus:ring-2 focus:ring-elite-primary/50 focus:border-elite-primary transition-colors"
-          />
+            <span className="font-semibold">WhatsApp Web</span>
+          </div>
+          <p className="text-sm text-elite-text/70">Chat directly without leaving the website</p>
         </div>
         
-        <DialogFooter className="mt-4">
+        <div className="relative flex-1 overflow-hidden h-[70vh]">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-elite-bg-dark/80">
+              <div className="loader" style={{ width: '40px', height: '40px' }}></div>
+            </div>
+          )}
+          <iframe 
+            src="https://web.whatsapp.com" 
+            className="w-full h-full border-0"
+            onLoad={handleIframeLoad}
+            title="WhatsApp Web"
+          ></iframe>
+        </div>
+        
+        <div className="p-4 border-t border-elite-surface/30">
           <Button
-            onClick={handleSend}
-            disabled={isSending}
-            className="w-full bg-[#25D366] hover:bg-[#20BF5B] text-white transition-colors"
+            onClick={() => onOpenChange(false)}
+            className="w-full bg-elite-surface hover:bg-elite-surface/80 text-white transition-colors"
           >
-            {isSending ? (
-              <>
-                <span className="loader mr-2" style={{ width: '20px', height: '20px' }}></span>
-                <span>Sending...</span>
-              </>
-            ) : (
-              <>
-                <Send size={18} className="mr-2" />
-                <span>Send to WhatsApp</span>
-              </>
-            )}
+            Close
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
 

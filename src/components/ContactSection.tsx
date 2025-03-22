@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Phone, 
@@ -34,7 +33,6 @@ const ContactSection: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // When deployed on Hostinger, this path will point to the PHP mail script
       const response = await fetch('mail.php', {
         method: 'POST',
         body: new FormData(e.target as HTMLFormElement),
@@ -107,7 +105,6 @@ const ContactSection: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
           <div className="glass-card p-8 rounded-lg animate-fade-in">
             <h3 className="text-2xl font-semibold mb-6">Send Us a Message</h3>
             
@@ -189,9 +186,7 @@ const ContactSection: React.FC = () => {
             </form>
           </div>
           
-          {/* Contact Info and Map */}
           <div className="flex flex-col">
-            {/* Contact Info */}
             <div className="glass-card p-8 rounded-lg mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
               
@@ -215,23 +210,20 @@ const ContactSection: React.FC = () => {
                 ))}
               </div>
               
-              {/* WhatsApp Button - Updated to open dialog */}
               <button
                 onClick={() => setWhatsAppDialogOpen(true)}
                 className="mt-6 w-full bg-[#25D366] text-white px-6 py-3 rounded-md hover:bg-[#20BF5B] transition-colors flex items-center justify-center"
               >
                 <MessageCircle size={18} className="mr-2" />
-                <span>Chat on WhatsApp</span>
+                <span>Open WhatsApp Chat</span>
               </button>
               
-              {/* WhatsApp Dialog Component */}
               <WhatsAppDialog 
                 open={whatsAppDialogOpen}
                 onOpenChange={setWhatsAppDialogOpen} 
               />
             </div>
             
-            {/* Google Map */}
             <div className="glass-card p-0 rounded-lg overflow-hidden h-80 animate-fade-in" style={{ animationDelay: '0.4s' }}>
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14602.654399048788!2d90.34276368981952!3d23.79588324278772!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c0d6f6b8c2ff%3A0x3b138861ee9c8c30!2sMirpur%201%2C%20Dhaka!5e0!3m2!1sen!2sbd!4v1697011214251!5m2!1sen!2sbd"
